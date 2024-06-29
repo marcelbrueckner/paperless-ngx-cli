@@ -1,0 +1,29 @@
+# Paperless-ngx CLI configuration example
+# https://github.com/marcelbrueckner/pypaperless-cli
+#
+# You don't need to write this configuration on your own
+# It will be created or updated throughout using the CLI,
+# e.g. storing accounts and their corresponding authentication information
+
+[accounts]
+current="default"
+
+# If you don't specify an account alias upon login,
+# a default alias (creatively named "default") will be used
+[accounts.default]
+host="http://localhost:8000"
+user="admin"
+token="token"
+alias="default"
+
+[accounts.personal]
+host="http://localhost:8000"
+user="admin"
+token="token"
+alias="personal"
+
+[accounts.business]
+host="https://business.example.com"
+user="admin"
+token="token"
+alias="business"
