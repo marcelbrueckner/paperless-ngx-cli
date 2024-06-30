@@ -2,6 +2,47 @@
 
 Paperless-ngx Command-Line Interface
 
+I've recently started a project to collect scripts around Paperless-ngx ([paperless.sh](https://paperless.sh)). It turned out - surprise - to be very tedious to write a separate [script](https://github.com/marcelbrueckner/paperless.sh/blob/6cc85b20482e0281d9e26ab82fcaccf34e27a276/scripts/post-consumption/content-matching/pngx-update-document.py) [each](https://github.com/marcelbrueckner/paperless.sh/blob/6cc85b20482e0281d9e26ab82fcaccf34e27a276/scripts/api/custom-field-sum/custom-field-sum.py) [time](https://github.com/marcelbrueckner/paperless.sh/blob/6cc85b20482e0281d9e26ab82fcaccf34e27a276/scripts/api/custom-field-sum/custom-field-sum-of-differences.py) I need to work with Paperless-ngx's API.
+I was looking for a way to easily update certain fields of my documents but without the overhead of "manually" calling API endpoints each time.
+I wrapped things in simple python scripts which eventually became this tool which essentially ~~is~~ will become Paperless-ngx at your command-line.
+
+## Usage
+
+This very first public release currently only allows you to retrieve information or update certain fields of your existing documents (with more to come in the future).
+
+```bash
+# Run pngx -h for help
+$ pngx [ command ] [ subcommand ] [ arguments and parameters ]
+```
+
+Log in to your Paperless-ngx instance which will be used in subsequent commands.
+
+```bash
+# Log in to the given host and save account credentials as default
+$ pngx auth login https://paperless.example.com --ask-token
+# Delete saved credentials from disk
+$ pngx auth logout
+```
+
+Show details of a document with specific ID
+
+```bash
+# Run pngx document show -h for help
+$ pngx document show <ID>
+Title                      2024-01-10_RE12345678                                                                      
+ID                         400                                                                                        
+ASN                        None                                                                                       
+Created                    2024-01-10
+...
+```
+
+Update a document's title and correspondent.
+
+```bash
+# Set document title to "My new document title" and set specific correspondent
+$ pngx document edit <ID> --title "My new document title" --correspondent <CORRESPONDENT_ID>
+```
+
 ## Configuration
 
 The Paperless-ngx CLI client can be configured in a variety of ways.
