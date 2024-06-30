@@ -14,6 +14,7 @@ from pypaperless_cli.config import config as appconfig
 from pypaperless_cli.utils import command_groups, validators
 from pypaperless_cli.commands import (
     auth,
+    document,
 )
 from pypaperless_cli.utils.types import (
     account_alias,
@@ -38,6 +39,7 @@ app["--help"].group = "Help"
 app["--version"].group = "Help"
 
 app.command(auth)
+app.command(document)
 
 
 #
