@@ -11,7 +11,7 @@ from rich.prompt import Prompt
 from rich.console import Console
 
 from pypaperless_cli.config import config as appconfig
-from pypaperless_cli.utils import command_groups, validators
+from pypaperless_cli.utils import groups, validators
 from pypaperless_cli.commands import (
     auth,
     document,
@@ -30,7 +30,7 @@ from pypaperless_cli.utils.types import (
 app = App(
         name="pngx",
         help="Command-line interface for Paperless-ngx 🌱",
-        group_commands=command_groups.commands,
+        group_commands=groups.commands,
         version_flags=["--version", "-v"]
     )
 
@@ -60,43 +60,43 @@ def main(
     *tokens: Annotated[str, Parameter(show=False, allow_leading_hyphen=True)],
     host: Annotated[Optional[URL], Parameter(
         env_var=['PNGX_HOST'],
-        group = [command_groups.meta_parameters, command_groups.meta_parameters_adhoc],
+        group = [groups.meta_parameters, groups.meta_parameters_adhoc],
         )] = None,
     user: Annotated[Optional[str], Parameter(
         env_var = ['PNGX_USER'],
-        group = [command_groups.meta_parameters, command_groups.meta_parameters_adhoc],
+        group = [groups.meta_parameters, groups.meta_parameters_adhoc],
         validator = validators.not_empty,
         )] = None,
     password: Annotated[Optional[str], Parameter(
         env_var = ['PNGX_PASSWORD'],
         negative = "--ask-password",
-        group = [command_groups.meta_parameters, command_groups.meta_parameters_adhoc, command_groups.password_xor_token]
+        group = [groups.meta_parameters, groups.meta_parameters_adhoc, groups.password_xor_token]
         )] = None,
     ask_password: Annotated[Optional[bool], Parameter(
         show = False,
-        group = [command_groups.meta_parameters, command_groups.meta_parameters_adhoc, command_groups.password_xor_token]
+        group = [groups.meta_parameters, groups.meta_parameters_adhoc, groups.password_xor_token]
         )] = None,
     token: Annotated[Optional[str], Parameter(
         env_var = ['PNGX_TOKEN'],
         negative = "--ask-token",
-        group = [command_groups.meta_parameters, command_groups.meta_parameters_adhoc, command_groups.password_xor_token],
+        group = [groups.meta_parameters, groups.meta_parameters_adhoc, groups.password_xor_token],
         )] = None,
     ask_token: Annotated[Optional[bool], Parameter(
         show = False,
-        group = [command_groups.meta_parameters, command_groups.meta_parameters_adhoc, command_groups.password_xor_token]
+        group = [groups.meta_parameters, groups.meta_parameters_adhoc, groups.password_xor_token]
         )] = None,
     config_file: Annotated[Optional[Path], Parameter(
         name = "--config",
         env_var = ['PNGX_CONFIG'],
-        group = [command_groups.meta_parameters, command_groups.meta_parameters_specific]
+        group = [groups.meta_parameters, groups.meta_parameters_specific]
         )] = None,
     use_account: Annotated[Optional[account_alias], Parameter(
         name = "--use",
-        group = [command_groups.meta_parameters, command_groups.meta_parameters_specific],
+        group = [groups.meta_parameters, groups.meta_parameters_specific],
         validator = validators.starts_with_ascii_letters
         )] = None,
     show_config: Annotated[Optional[bool], Parameter(
-        group = [command_groups.meta_parameters, "Help"],
+        group = [groups.meta_parameters, "Help"],
         negative = [],
         show_default = False
         )] = False,

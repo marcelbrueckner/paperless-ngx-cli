@@ -1,3 +1,5 @@
+"""CLI command and parameter groups."""
+
 from cyclopts import Group, validators
 
 from pypaperless_cli.utils.validators import adhoc_xor_specific
