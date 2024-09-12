@@ -55,6 +55,19 @@ $ pngx document edit <ID> --add-tags <ID|EXACT_NAME> [ID|EXACT_NAME]
 $ pngx document edit <ID> --remove-tags <ID|EXACT_NAME> [ID|EXACT_NAME]
 ```
 
+Add, update or remove custom fields.
+
+Similar to tags, custom fields can be specified by ID or the *exact* name, which must be quoted if it contains spaces.
+In addition, custom fields can have a value that can be passed in a KEY=VALUE style. Make sure your value adheres to the custom field's type. If your custom field name contains an equal sign, refer to it by its ID.
+
+You can add and remove multiple custom fields at once, separated by space.
+
+```bash
+# Add/Update or remove custom field given the ID or _exact_ name
+$ pngx document edit <ID> --add-custom-fields <ID|EXACT_NAME>[=VALUE] [<ID|EXACT_NAME>[=VALUE]]
+$ pngx document edit <ID> --remove-custom-fields <ID|EXACT_NAME> [<ID|EXACT_NAME>]
+```
+
 ## Configuration
 
 The Paperless-ngx CLI client can be configured in a variety of ways.

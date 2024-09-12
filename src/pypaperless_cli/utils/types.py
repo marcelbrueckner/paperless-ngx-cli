@@ -16,3 +16,8 @@ URL = Annotated[str, Parameter(
     converter = converters.format_url,
     validator = [validators.not_empty, validators.url]
     )]
+
+CustomFieldKeyValue = Annotated[str|int, Parameter(
+    converter = converters.custom_field_name_to_id,
+    validator = validators.custom_field_exists
+    )]

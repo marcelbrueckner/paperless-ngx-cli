@@ -4,10 +4,14 @@ from typing import Annotated, List, Optional
 
 from cyclopts import Group, Parameter
 
+from pypaperless.models.common import CustomFieldValueType
+
 from pypaperless_cli.api import PaperlessAsyncAPI
 from pypaperless_cli.utils import converters, groups, validators
+from pypaperless_cli.utils.types import CustomFieldKeyValue
 
 group_tags = Group(name = "Tags parameters", sort_key=groups.standard_fields.sort_key+1)
+group_custom_fields = Group(name = "Custom fields parameters", sort_key=group_tags.sort_key+1)
 
 async def edit(
         id: int,
@@ -41,6 +45,28 @@ async def edit(
                 converter = converters.tag_name_to_id,
                 validator = validators.tag_exists
             )] = None,
+
+        add_custom_fields: Annotated[
+            Optional[List[CustomFieldKeyValue]],
+            Parameter(
+                name = ["--custom-fields", "--add-custom-fields"],
+                negative = [],
+                group = group_custom_fields,
+                # Assigning converter/validator to custom type doesn't work with the current version of Cyclopts,
+                # thus explicitly adding it to parameter
+                converter = converters.custom_field_name_to_id,
+                validator = validators.custom_field_exists
+            )] = None,
+        remove_custom_fields: Annotated[
+            Optional[List[CustomFieldKeyValue]],
+            Parameter(
+                negative = [],
+                group = group_custom_fields,
+                # Assigning converter/validator to custom type doesn't work with the current version of Cyclopts,
+                # thus explicitly adding it to parameter
+                converter = converters.custom_field_name_to_id,
+                validator = validators.custom_field_exists
+            )] = None
     ) -> None:
 
     """Update a document's information.
@@ -66,6 +92,12 @@ async def edit(
         Assign tags. Requires the ID or the exact name of the tags.
     remove_tags: List[str|int]
         Unassign tags. Requires the ID or the exact name of the tags.
+
+    add_custom_fields: List[CustomFieldKeyValue]
+        Assign custom fields (--custom-fields <NAME|ID>), optionally set a value (--custom-fields <NAME|ID>=VALUE).
+        To clear a custom field, set VALUE to an empty string.
+    remove_custom_fields: List[CustomFieldKeyValue]
+        Unassign given custom fields.
     """
 
     async with PaperlessAsyncAPI() as paperless:
@@ -96,6 +128,30 @@ async def edit(
         if add_tags:
             # Union existing and new tags, removing duplicate entries
             document.tags = list(dict.fromkeys(document.tags + add_tags))
+
+        if remove_custom_fields:
+            # Remove given custom field if it's assigned to document
+            for f in remove_custom_fields:
+                remove_custom_field = next((custom_field for custom_field in document.custom_fields if custom_field.field == f["id"]), None)
+                if remove_custom_field:
+                    document.custom_fields.remove(remove_custom_field)
+
+        if add_custom_fields:
+            # Update existing custom fields with possibly new values
+            for custom_field in document.custom_fields:
+                updated_custom_field = next((f for f in add_custom_fields if custom_field.field == f["id"]), None)
+                if updated_custom_field:
+                    if updated_custom_field["value"] is not None:
+                        custom_field.value = updated_custom_field["value"]
+                    add_custom_fields.remove(updated_custom_field)
+            
+            # Add remaining new custom fields
+            for custom_field in add_custom_fields:
+                new_custom_field = CustomFieldValueType(
+                    field = custom_field["id"],
+                    value = custom_field["value"]
+                )
+                document.custom_fields.append(new_custom_field)
 
         try:
             await document.update()
