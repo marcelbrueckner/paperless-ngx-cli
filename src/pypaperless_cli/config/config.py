@@ -240,7 +240,7 @@ class CLIConfig:
         content = document()
 
         content.add(comment("Paperless-ngx CLI configuration"))
-        content.add(comment("https://github.com/marcelbrueckner/pypaperless-cli"))
+        content.add(comment("https://github.com/marcelbrueckner/paperless-ngx-cli"))
         content.add(nl())
 
         accounts = table()
