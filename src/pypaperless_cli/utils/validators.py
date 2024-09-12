@@ -2,8 +2,11 @@
 Validators.
 """
 
+import asyncio
 from string import ascii_letters
 from typing import Any, List
+
+from pypaperless_cli.api import PaperlessAsyncAPI
 
 
 #
@@ -22,6 +25,27 @@ def url(type_, value) -> None:
     valid_protocols = ('http://', 'https://')
     if not value.startswith(valid_protocols):
         raise ValueError(f"Must start with {valid_protocols}.")
+
+def tag_exists(type_, tags: List[int]) -> Any:
+    """Validate tag exists."""
+
+    async def validate_tag_id(tag_ids: List[int]) -> None:
+        filters = {
+            "id__in": ",".join(map(str,tag_ids))
+        }
+
+        async with PaperlessAsyncAPI() as paperless:
+            async with paperless.tags.reduce(**filters) as filtered:
+                existing_ids = await filtered.all()
+        
+        invalid_ids = set(tag_ids) - set(existing_ids)
+        
+        if len(invalid_ids) == 1:
+            raise ValueError(f"Tag with ID {', '.join(map(str,invalid_ids))} does not exist.")
+        if len(invalid_ids) > 1:
+            raise ValueError(f"Tags with IDs {', '.join(map(str,invalid_ids))} do not exist.")
+    
+    asyncio.run(validate_tag_id(tags))
 
 #
 # Group validators

@@ -43,6 +43,18 @@ Update a document's title and correspondent.
 $ pngx document edit <ID> --title "My new document title" --correspondent <CORRESPONDENT_ID>
 ```
 
+Assign or unassign a document's tags.
+
+Tags can be specified by ID or the *exact* name. If your tag name contains spaces, wrap it in quotes.
+
+You can add and remove multiple tags at once, separated by space.
+
+```bash
+# Add or remove one or multiple tags to/from a document given the ID or _exact_ name
+$ pngx document edit <ID> --add-tags <ID|EXACT_NAME> [ID|EXACT_NAME]
+$ pngx document edit <ID> --remove-tags <ID|EXACT_NAME> [ID|EXACT_NAME]
+```
+
 ## Configuration
 
 The Paperless-ngx CLI client can be configured in a variety of ways.

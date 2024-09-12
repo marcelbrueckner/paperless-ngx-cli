@@ -11,4 +11,4 @@ document = App(name="document", help="Work with your documents.", group_commands
 document["--help"].group = "Help"
 
 document.command(show)
-document.command(edit)
+document.command(edit, group_arguments=groups.arguments, group_parameters=groups.standard_fields)
