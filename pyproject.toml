@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pypaperless-cli"
-version = "0.2.0"
+version = "0.2.1"
 description = ""
 authors = ["Marcel Brückner <marcelbrueckner@users.noreply.github.com>"]
 readme = "README.md"
