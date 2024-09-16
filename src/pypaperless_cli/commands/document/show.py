@@ -106,7 +106,7 @@ async def show(
         else:
             table.add_row("Tags", highlight_none(str(None)))
 
-        table.add_row("Details", f"{appconfig.current.host}{GUI_PATH["documents_details"].format(pk=document.id)}")
+        table.add_row("Details", f"{appconfig.current.host}{GUI_PATH['documents_details'].format(pk=document.id)}")
 
         table.add_row("[white]Custom fields")
         if custom_fields:
