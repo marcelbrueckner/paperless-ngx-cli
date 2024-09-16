@@ -644,13 +644,13 @@ windows-terminal = ["colorama (>=0.4.6)"]
 
 [[package]]
 name = "pypaperless"
-version = "3.1.3"
+version = "3.1.14"
 description = "Little api client for paperless(-ngx)."
 optional = false
 python-versions = "<4.0,>=3.11"
 files = [
-    {file = "pypaperless-3.1.3-py3-none-any.whl", hash = "sha256:ff5654ccaffc231910d27d80fd68644ac58b40fb0436b0662857dee089f7d2ee"},
-    {file = "pypaperless-3.1.3.tar.gz", hash = "sha256:a44fdf1e8ae72fe1db4218bc7afe2f6008ec39e848ce9e15d1880060d3930b9e"},
+    {file = "pypaperless-3.1.14-py3-none-any.whl", hash = "sha256:61e0051de255af7b513e4154ccd365ae78905feba373e364e592222df3cca79b"},
+    {file = "pypaperless-3.1.14.tar.gz", hash = "sha256:64f4884492367821815b3ab4296818f1355df179293a44e404c1e2cb54ca57f5"},
 ]
 
 [package.dependencies]
@@ -896,4 +896,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "27341425cbb542201f8f30c19b9cda22aacac20db4f27e8ad3dbb3dc31fb89a1"
+content-hash = "d5ff36ea5cabbc4f9d5569c72770d4a295da00fa43a8286010d0d8d800c6c446"
