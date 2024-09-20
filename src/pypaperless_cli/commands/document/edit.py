@@ -8,65 +8,65 @@ from pypaperless.models.common import CustomFieldValueType
 
 from pypaperless_cli.api import PaperlessAsyncAPI
 from pypaperless_cli.utils import converters, groups, validators
-from pypaperless_cli.utils.types import CustomFieldKeyValue
+from pypaperless_cli.utils.types import CustomFieldKeyValue, Document
 
 group_tags = Group(name = "Tags parameters", sort_key=groups.standard_fields.sort_key+1)
 group_custom_fields = Group(name = "Custom fields parameters", sort_key=group_tags.sort_key+1)
 
 async def edit(
-        id: int,
-        /, *,
-        asn: Optional[int] = None,
-        correspondent: Optional[int] = None,
-        document_type: Optional[int] = None,
-        storage_path: Optional[int] = None,
-        title: Optional[str] = None,
-        created_date: Optional[str] = None,
-        
-        # Handle tags
-        add_tags: Annotated[
-            Optional[List[str|int]],
-            Parameter(
-                name = ["--tags", "--add-tags"],
-                negative = [],
-                group = group_tags,
-                # Assigning converter/validator to custom type doesn't work with the current version of Cyclopts,
-                # thus explicitly adding it to parameter
-                converter = converters.tag_name_to_id,
-                validator = validators.tag_exists
-            )] = None,
-        remove_tags: Annotated[
-            Optional[List[str|int]],
-            Parameter(
-                negative = [],
-                group = group_tags,
-                # Assigning converter/validator to custom type doesn't work with the current version of Cyclopts,
-                # thus explicitly adding it to parameter
-                converter = converters.tag_name_to_id,
-                validator = validators.tag_exists
-            )] = None,
+    id: Document,
+    /, *,
+    asn: Optional[int] = None,
+    correspondent: Optional[int] = None,
+    document_type: Optional[int] = None,
+    storage_path: Optional[int] = None,
+    title: Optional[str] = None,
+    created_date: Optional[str] = None,
+    
+    # Handle tags
+    add_tags: Annotated[
+        Optional[List[str|int]],
+        Parameter(
+            name = ["--tags", "--add-tags"],
+            negative = [],
+            group = group_tags,
+            # Assigning converter/validator to custom type doesn't work with the current version of Cyclopts,
+            # thus explicitly adding it to parameter
+            converter = converters.tag_name_to_id,
+            validator = validators.tag_exists
+        )] = None,
+    remove_tags: Annotated[
+        Optional[List[str|int]],
+        Parameter(
+            negative = [],
+            group = group_tags,
+            # Assigning converter/validator to custom type doesn't work with the current version of Cyclopts,
+            # thus explicitly adding it to parameter
+            converter = converters.tag_name_to_id,
+            validator = validators.tag_exists
+        )] = None,
 
-        add_custom_fields: Annotated[
-            Optional[List[CustomFieldKeyValue]],
-            Parameter(
-                name = ["--custom-fields", "--add-custom-fields"],
-                negative = [],
-                group = group_custom_fields,
-                # Assigning converter/validator to custom type doesn't work with the current version of Cyclopts,
-                # thus explicitly adding it to parameter
-                converter = converters.custom_field_name_to_id,
-                validator = validators.custom_field_exists
-            )] = None,
-        remove_custom_fields: Annotated[
-            Optional[List[CustomFieldKeyValue]],
-            Parameter(
-                negative = [],
-                group = group_custom_fields,
-                # Assigning converter/validator to custom type doesn't work with the current version of Cyclopts,
-                # thus explicitly adding it to parameter
-                converter = converters.custom_field_name_to_id,
-                validator = validators.custom_field_exists
-            )] = None
+    add_custom_fields: Annotated[
+        Optional[List[CustomFieldKeyValue]],
+        Parameter(
+            name = ["--custom-fields", "--add-custom-fields"],
+            negative = [],
+            group = group_custom_fields,
+            # Assigning converter/validator to custom type doesn't work with the current version of Cyclopts,
+            # thus explicitly adding it to parameter
+            converter = converters.custom_field_name_to_id,
+            validator = validators.custom_field_exists
+        )] = None,
+    remove_custom_fields: Annotated[
+        Optional[List[CustomFieldKeyValue]],
+        Parameter(
+            negative = [],
+            group = group_custom_fields,
+            # Assigning converter/validator to custom type doesn't work with the current version of Cyclopts,
+            # thus explicitly adding it to parameter
+            converter = converters.custom_field_name_to_id,
+            validator = validators.custom_field_exists
+        )] = None
     ) -> None:
 
     """Update a document's information.

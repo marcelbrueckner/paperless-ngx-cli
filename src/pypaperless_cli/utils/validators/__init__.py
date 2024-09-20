@@ -4,6 +4,10 @@ from string import ascii_letters
 from typing import Any
 
 
+# Single value validation
+from pypaperless_cli.utils.validators.document import document_exists
+
+# List values validation
 from pypaperless_cli.utils.validators.custom_field import custom_field_exists
 from pypaperless_cli.utils.validators.tag import tag_exists
 

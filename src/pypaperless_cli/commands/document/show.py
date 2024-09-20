@@ -11,9 +11,10 @@ from pypaperless_cli.api import PaperlessAsyncAPI
 from pypaperless_cli.const import GUI_PATH
 from pypaperless_cli.config import config as appconfig
 from pypaperless_cli.utils.highlighter import highlight_none
+from pypaperless_cli.utils.types import Document
 
 async def show(
-    id: int, /, *,
+    id: Document, /, *,
     json: Annotated[Optional[bool], Parameter(
         negative = [],
         show_default = False

@@ -17,6 +17,10 @@ URL = Annotated[str, Parameter(
     validator = [validators.not_empty, validators.url]
     )]
 
+Document = Annotated[int, Parameter(
+    validator = validators.document_exists
+    )]
+
 CustomFieldKeyValue = Annotated[str|int, Parameter(
     converter = converters.custom_field_name_to_id,
     validator = validators.custom_field_exists
