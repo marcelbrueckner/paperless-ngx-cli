@@ -67,16 +67,16 @@ async def show(
                 async for tag in filtered:
                     tags.append(tag)
 
-        if document.custom_fields:
+        if document.custom_fields._data:
             filters = {
-                "id__in": ",".join(map(lambda f: str(f.field), document.custom_fields))
+                "id__in": ",".join(map(lambda f: str(f["field"]), document.custom_fields._data))
             }
             async with paperless.custom_fields.reduce(**filters) as filtered:
                 async for field in filtered:
                     custom_fields.append({
                         "id": field.id,
                         "name": field.name,
-                        "value": next(x.value for x in document.custom_fields if x.field == field.id),
+                        "value": next(x["value"] for x in document.custom_fields._data if x["field"] == field.id),
                         "data_type": field.data_type
                     })
 

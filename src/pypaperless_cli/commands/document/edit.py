@@ -4,8 +4,6 @@ from typing import Annotated, List, Optional
 
 from cyclopts import Group, Parameter
 
-from pypaperless.models.common import CustomFieldValueType
-
 from pypaperless_cli.api import PaperlessAsyncAPI
 from pypaperless_cli.utils import converters, groups, validators
 from pypaperless_cli.utils.types import CustomFieldKeyValue, Document
@@ -101,6 +99,8 @@ async def edit(
     """
 
     async with PaperlessAsyncAPI() as paperless:
+        # Define how document should be updated
+        only_changed: bool = True
         document = await paperless.documents(id)
 
         if asn:
@@ -119,7 +119,8 @@ async def edit(
             document.title = title
         
         if created_date:
-            document.created_date = created_date
+            from datetime import datetime
+            document.created = datetime.strptime(created_date, "%Y-%m-%d")
 
         if remove_tags:
             # Only keep tags not in `remove_tags``
@@ -132,28 +133,34 @@ async def edit(
         if remove_custom_fields:
             # Remove given custom field if it's assigned to document
             for f in remove_custom_fields:
-                remove_custom_field = next((custom_field for custom_field in document.custom_fields if custom_field.field == f["id"]), None)
+                remove_custom_field = next((custom_field for custom_field in document.custom_fields._data if custom_field["field"] == f["id"]), None)
                 if remove_custom_field:
-                    document.custom_fields.remove(remove_custom_field)
+                    document.custom_fields._data.remove(remove_custom_field)
+
+            # Custom fields are only updated by paperless-api when updating all fields (PUT)
+            only_changed = False
 
         if add_custom_fields:
             # Update existing custom fields with possibly new values
-            for custom_field in document.custom_fields:
-                updated_custom_field = next((f for f in add_custom_fields if custom_field.field == f["id"]), None)
+            for custom_field in document.custom_fields._data:
+                updated_custom_field = next((f for f in add_custom_fields if custom_field["field"] == f["id"]), None)
                 if updated_custom_field:
                     if updated_custom_field["value"] is not None:
-                        custom_field.value = updated_custom_field["value"]
+                        custom_field["value"] = updated_custom_field["value"]
                     add_custom_fields.remove(updated_custom_field)
             
             # Add remaining new custom fields
             for custom_field in add_custom_fields:
-                new_custom_field = CustomFieldValueType(
-                    field = custom_field["id"],
-                    value = custom_field["value"]
-                )
-                document.custom_fields.append(new_custom_field)
+                new_custom_field = {
+                    "field": custom_field["id"],
+                    "value": custom_field["value"]
+                }
+                document.custom_fields._data.append(new_custom_field)
+            
+            # Custom fields are only updated by paperless-api when updating all fields (PUT)
+            only_changed = False
 
         try:
-            await document.update()
+            await document.update(only_changed=only_changed)
         except Exception as e:
             raise ValueError(str(e))
