@@ -19,8 +19,3 @@ def format_url(type_, *args) -> Any:
         # If it's not a valid scheme,
         # subsequent validation will catch any error
         return value
-
-def resource_name_to_id(type_, *args) -> Any:
-    """Determines ID for a resource's name."""
-
-    print(f"resource_name_to_id(): Resource {type_} with name {args} might exist")
