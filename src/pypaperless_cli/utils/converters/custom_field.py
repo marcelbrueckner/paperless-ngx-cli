@@ -1,10 +1,14 @@
 """Custom field related converter"""
 
 import asyncio
+
+from pypaperless.models.common import CustomFieldType
+
 from typing import Any
 
 from pypaperless_cli.api import PaperlessAsyncAPI
-
+from pypaperless_cli.utils.validators.custom_field import _validate_custom_fields
+from pypaperless_cli.utils.converters.helpers import strtobool
 
 async def _get_custom_field_id(name: str) -> str:
     filters = {
@@ -16,6 +20,17 @@ async def _get_custom_field_id(name: str) -> str:
                 return field.id
             else:
                 raise ValueError(f"Custom field \"{name}\" does not exist.")
+
+async def _get_custom_field_type(id: int) -> CustomFieldType:
+    """Returns CustomFieldType for a given custom field ID."""
+
+    # Method will raise an error if the ID doesn't exist
+    await _validate_custom_fields([id])
+
+    # At this point, the custom field ID can be considered valid
+    async with PaperlessAsyncAPI() as paperless:
+        field = await paperless.custom_fields(id)
+        return field.data_type
 
 def custom_field_name_to_id(type_, *args) -> Any:
     """Determines ID for custom field name."""
@@ -39,6 +54,9 @@ def custom_field_name_to_id(type_, *args) -> Any:
             value = None
         else:
             value = "".join(v)
+        
+        if value and asyncio.run(_get_custom_field_type(int(k))) == CustomFieldType.BOOLEAN:
+            value = strtobool(value)
 
         params.append({
             "id": int(k),

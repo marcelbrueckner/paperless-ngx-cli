@@ -1,1 +1,1 @@
-
+"""Paperless-ngx CLI utilities."""
