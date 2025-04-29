@@ -6,6 +6,7 @@ from typing import Any
 from pypaperless_cli.utils.converters.custom_field import custom_field_name_to_id
 from pypaperless_cli.utils.converters.tag import tag_name_to_id
 
+import pypaperless_cli.utils.converters.helpers
 
 def format_url(type_, *args) -> Any:
     """Default to https:// for URLs without scheme."""
