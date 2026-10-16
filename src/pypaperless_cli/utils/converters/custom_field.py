@@ -2,7 +2,8 @@
 
 import asyncio
 
-from pypaperless.models.common import CustomFieldType
+from pypaperless.models.custom_fields import CustomFieldType
+from pypaperless.models.filters import CustomFieldFilters
 
 from typing import Any
 
@@ -11,11 +12,11 @@ from pypaperless_cli.utils.validators.custom_field import _validate_custom_field
 from pypaperless_cli.utils.converters.helpers import strtobool
 
 async def _get_custom_field_id(name: str) -> str:
-    filters = {
+    filters: CustomFieldFilters = {
         "name__iexact": name
     }
     async with PaperlessAsyncAPI() as paperless:
-        async with paperless.custom_fields.reduce(**filters) as filtered:
+        async with paperless.custom_fields.filter(**filters) as filtered:
             async for field in filtered:
                 return field.id
             else:

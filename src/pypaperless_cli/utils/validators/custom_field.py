@@ -3,19 +3,21 @@
 import asyncio
 from typing import Any, List
 
+from pypaperless.models.filters import CustomFieldFilters
+
 from pypaperless_cli.api import PaperlessAsyncAPI
 
 
 async def _validate_custom_fields(field_ids: List[int]) -> None:
     """Validates custom fields by their IDs."""
 
-    filters = {
+    filters: CustomFieldFilters = {
         "id__in": ",".join(map(str,field_ids))
     }
 
     async with PaperlessAsyncAPI() as paperless:
-        async with paperless.custom_fields.reduce(**filters) as filtered:
-            existing_ids = await filtered.all()
+        async with paperless.custom_fields.filter(**filters) as filtered:
+            existing_ids = [x.id for x in await filtered.as_list()]
     
     invalid_ids = set(field_ids) - set(existing_ids)
     

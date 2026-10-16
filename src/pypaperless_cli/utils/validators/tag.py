@@ -3,19 +3,21 @@
 import asyncio
 from typing import Any, List
 
+from pypaperless.models.filters import TagFilters
+
 from pypaperless_cli.api import PaperlessAsyncAPI
 
 
 async def _validate_tags(tag_ids: List[int]) -> None:
     """Validates tags by their IDs."""
 
-    filters = {
+    filters: TagFilters = {
         "id__in": ",".join(map(str,tag_ids))
     }
 
     async with PaperlessAsyncAPI() as paperless:
-        async with paperless.tags.reduce(**filters) as filtered:
-            existing_ids = await filtered.all()
+        async with paperless.tags.filter(**filters) as filtered:
+            existing_ids = [x.id for x in await filtered.as_list()]
     
     invalid_ids = set(tag_ids) - set(existing_ids)
     

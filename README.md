@@ -6,6 +6,12 @@ I've recently started a project to collect scripts around Paperless-ngx ([paperl
 I was looking for a way to easily update certain fields of my documents but without the overhead of "manually" calling API endpoints each time.
 I wrapped things in simple python scripts which eventually became this tool which essentially ~~is~~ will become Paperless-ngx at your command-line.
 
+## Requirements
+
+- Python 3.13+
+- Paperless-ngx >= 3.0
+- [pypaperless](https://github.com/tb1337/pypaperless) >= 6 (installed automatically)
+
 ## Usage
 
 This very first public release currently only allows you to retrieve information or update certain fields of your existing documents (with more to come in the future).

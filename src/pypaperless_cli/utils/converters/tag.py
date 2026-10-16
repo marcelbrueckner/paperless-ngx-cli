@@ -3,15 +3,17 @@
 import asyncio
 from typing import Any
 
+from pypaperless.models.filters import TagFilters
+
 from pypaperless_cli.api import PaperlessAsyncAPI
 
 
 async def _get_tag_id(name: str) -> str:
-    filters = {
+    filters: TagFilters = {
         "name__iexact": name
     }
     async with PaperlessAsyncAPI() as paperless:
-        async with paperless.tags.reduce(**filters) as filtered:
+        async with paperless.tags.filter(**filters) as filtered:
             async for tag in filtered:
                 return tag.id
             else:

@@ -1,8 +1,9 @@
 """Method for retrieving information about a document."""
 
-from typing import Annotated, Optional
+from typing import Annotated, Any, Optional
 
 from cyclopts import Parameter
+from pypaperless.models.filters import CustomFieldFilters, TagFilters
 
 from rich.console import Console
 from rich.table import Table
@@ -41,9 +42,9 @@ async def show(
         correspondent = None
         storage_path = None
         tags = []
-        custom_fields = []
+        custom_fields: list[dict[str, Any]] = []
 
-        if len(document.title) > 0:
+        if document.title:
             doc_title = document.title
 
         if document.document_type is not None:
@@ -60,28 +61,29 @@ async def show(
 
         
         if document.tags:
-            filters = {
+            tag_filters: TagFilters = {
                 "id__in": ",".join(map(str, document.tags))
             }
-            async with paperless.tags.reduce(**filters) as filtered:
-                async for tag in filtered:
+            async with paperless.tags.filter(**tag_filters) as filtered_tags:
+                async for tag in filtered_tags:
                     tags.append(tag)
 
-        if document.custom_fields._data:
-            filters = {
-                "id__in": ",".join(map(lambda f: str(f["field"]), document.custom_fields._data))
+        doc_custom_fields = list(document.custom_fields or [])
+        if doc_custom_fields:
+            custom_field_filters: CustomFieldFilters = {
+                "id__in": ",".join(map(lambda f: str(f.field), doc_custom_fields))
             }
-            async with paperless.custom_fields.reduce(**filters) as filtered:
-                async for field in filtered:
+            async with paperless.custom_fields.filter(**custom_field_filters) as filtered_custom_fields:
+                async for field in filtered_custom_fields:
                     custom_fields.append({
                         "id": field.id,
                         "name": field.name,
-                        "value": next(x["value"] for x in document.custom_fields._data if x["field"] == field.id),
+                        "value": next(x.value for x in doc_custom_fields if x.field == field.id),
                         "data_type": field.data_type
                     })
 
     if json:
-        Console().print_json(data=document._data)
+        Console().print_json(data=document.model_dump(mode="json", by_alias=True))
 
     else:
         table = Table.grid(padding=(0,3))
@@ -97,7 +99,7 @@ async def show(
 
         table.add_row("ID", str(document.id))
         table.add_row("ASN", highlight_none(str(document.archive_serial_number)))
-        table.add_row("Created", str(document.created_date))
+        table.add_row("Created", str(document.created))
         table.add_row("Correspondent", highlight_none(str(correspondent)))
         table.add_row("Document type", highlight_none(str(doc_type)))
         table.add_row("Storage path", highlight_none(str(storage_path)))
